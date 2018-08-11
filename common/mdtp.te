@@ -26,7 +26,7 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 type mdtpdaemon, domain;
-type mdtpdaemon_exec, exec_type, file_type;
+type mdtpdaemon_exec, exec_type, vendor_file_type, file_type;
 
 allow mdtpdaemon self:capability {
     setuid
@@ -37,19 +37,20 @@ userdebug_or_eng(`
     #Needed for kill(pid, 0) existance test
     allow mdtpdaemon su:process signull;
     allow mdtpdaemon self:capability kill;
+    diag_use(mdtpdaemon)
 ')
 
 #Allow for transition from init domain to mdtpdaemon
 init_daemon_domain(mdtpdaemon)
 
 #Allow mdtpdaemon to use Binder IPC
-binder_use(mdtpdaemon)
+#binder_use(mdtpdaemon)
 
 #Mark mdtpdaemon as a Binder service domain
-binder_service(mdtpdaemon)
+#binder_service(mdtpdaemon)
 
 #Allow mdtpdaemon to be registered with service manager
-allow mdtpdaemon mdtpdaemon_service:service_manager { add find };
+#allow mdtpdaemon mdtpdaemon_service:service_manager { add find };
 
 #Allow apps to interact with mdtpdaemon
 binder_call(mdtpdaemon, platform_app)
@@ -70,7 +71,6 @@ allow mdtpdaemon tee_device:chr_file rw_file_perms;
 # Provide access to block devices
 allow mdtpdaemon block_device:dir r_dir_perms;
 allow mdtpdaemon mdtp_device:blk_file rw_file_perms;
-allow mdtpdaemon dip_device:blk_file rw_file_perms;
 allow mdtpdaemon system_block_device:blk_file r_file_perms;
 
 # Provide access to QTI Crypto driver for MDTP
@@ -83,6 +83,10 @@ r_dir_file(mdtpdaemon, system_file)
 # Provide mdtpd ability to access QMUXD/IPCRouter for QMI
 qmux_socket(mdtpdaemon);
 allow mdtpdaemon self:socket create_socket_perms;
+allowxperm mdtpdaemon self:socket ioctl msm_sock_ipc_ioctls;
 
 # Provide tee ability to run executables in rootfs for MDTP
 allow mdtpdaemon rootfs:file x_file_perms;
+allow mdtpdaemon ion_device:chr_file r_file_perms;
+allow mdtpdaemon sysfs:file r_file_perms;
+allow mdtpdaemon sysfs_data:file r_file_perms;

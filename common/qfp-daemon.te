@@ -1,4 +1,4 @@
-# Copyright (c) 2015, The Linux Foundation. All rights reserved.
+# Copyright (c) 2017 Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,15 +27,15 @@
 
 #qfp daemon for ultrasonic fingerprint sensor
 type qfp-daemon, domain;
-type qfp-daemon_exec, exec_type, file_type;
+type qfp-daemon_exec, exec_type, vendor_file_type, file_type;
 
-net_domain(qfp-daemon)
+hal_server_domain(qfp-daemon, hal_fingerprint)
 init_daemon_domain(qfp-daemon)
 
-binder_call(qfp-daemon, servicemanager)
+#binder_call(qfp-daemon, servicemanager)
 binder_call(qfp-daemon, system_app)
-binder_call(qfp-daemon, fingerprintd)
-binder_use(qfp-daemon)
+binder_call(qfp-daemon, fps_hal)
+#binder_use(qfp-daemon)
 
 allow qfp-daemon qfp-daemon_data_file:dir { rw_dir_perms setattr };
 allow qfp-daemon qfp-daemon_data_file:file create_file_perms;
@@ -43,8 +43,8 @@ allow qfp-daemon qfp-daemon_data_file:file create_file_perms;
 # Access to tee_device
 allow qfp-daemon tee_device:chr_file rw_file_perms;
 
-# Add IQfpService service
-allow qfp-daemon iqfp_service:service_manager add;
+# Access QFP Android Proxy
+#allow qfp-daemon qfp_proxy_service:service_manager find;
 
 # Read system property
 allow qfp-daemon property_socket:sock_file write;
@@ -57,16 +57,13 @@ r_dir_file(qfp-daemon, firmware_file)
 
 # R dir perms for persist qc_senseid dir
 r_dir_file(qfp-daemon, persist_file)
-r_dir_file(qfp-daemon, persist_qc_senseid_file)
-
-# Allow qfp daemon access to system server
-binder_call(qfp-daemon, system_server);
-
-# Allow read to sensor device and read/write to sensor socket
-allow qfp-daemon sensors_device:chr_file r_file_perms;
-allow qfp-daemon sensors_socket:sock_file rw_file_perms;
-allow qfp-daemon sensors:unix_stream_socket connectto;
+r_dir_file(qfp-daemon, persist_qti_fp_file)
 
 # Allow listing input devices and sending input events
 allow qfp-daemon input_device:chr_file rw_file_perms;
 allow qfp-daemon input_device:dir r_dir_perms;
+
+#diag
+userdebug_or_eng(`
+    diag_use(qfp-daemon)
+')

@@ -1,5 +1,5 @@
 type mpdecision, domain, mlstrustedsubject;
-type mpdecision_exec, exec_type, file_type;
+type mpdecision_exec, exec_type, vendor_file_type, file_type;
 
 init_daemon_domain(mpdecision)
 
@@ -16,7 +16,7 @@ allow mpdecision kernel:process setsched;
 allow mpdecision self: {
     netlink_kobject_uevent_socket
     socket
-} create_socket_perms;
+} create_socket_perms_no_ioctl;
 
 allow mpdecision device_latency:chr_file w_file_perms;
 
@@ -41,5 +41,4 @@ allow mpdecision mpctl_data_file:file create_file_perms;
 r_dir_file(mpdecision, system_server)
 
 #mpdecision set properties
-unix_socket_connect(mpdecision, property, init)
-allow mpdecision mpdecision_prop:property_service set;
+set_prop(mpdecision, mpdecision_prop)

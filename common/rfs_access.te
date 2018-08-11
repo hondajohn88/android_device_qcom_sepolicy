@@ -1,6 +1,6 @@
 # rfs_access - rfs_access daemon
 type rfs_access, domain;
-type rfs_access_exec, exec_type, file_type;
+type rfs_access_exec, exec_type, vendor_file_type, file_type;
 init_daemon_domain(rfs_access)
 
 #The files created by rfs_access process in the /data folder will have type rfs_file
@@ -19,7 +19,7 @@ allow rfs_access {
 }:chr_file rw_file_perms;
 
 #For QMI sockets and IPCR Sockets
-allow rfs_access self:socket create_socket_perms;
+allow rfs_access self:socket create_socket_perms_no_ioctl;
 
 #For Wakelocks
 wakelock_use(rfs_access)
@@ -45,6 +45,10 @@ allow rfs_access rfs_shared_hlos_file:file create_file_perms;
 allow rfs_access tombstone_data_file:dir create_dir_perms;
 allow rfs_access tombstone_data_file:file create_file_perms;
 
+#For ramdump entries in /data/vendor/tombstones.
+allow rfs_access vendor_tombstone_data_file:dir create_dir_perms;
+allow rfs_access vendor_tombstone_data_file:file create_file_perms;
+
 #For firmware entries in /firmware to read NHLOS.bin files ( only perms to read and get attributes).
 r_dir_file(rfs_access, firmware_file)
 
@@ -53,8 +57,17 @@ allow rfs_access self:capability {
     setuid
     setgid
     setpcap
-    net_raw
+    net_bind_service
 };
+
+# RFS UID and GIDs were changed and moved from old values to new ones OEM range.
+# The below permissions are required to recursively update the folder ownership
+# to the new values in the OEM range.
+
+allow rfs_access self:capability { dac_read_search chown dac_override };
+
+#For access to the kmsg device
+allow rfs_access kmsg_device:chr_file w_file_perms;
 
 #Prevent other domains from accessing RFS data files.
 neverallow { domain -rfs_access -kernel -recovery -init userdebug_or_eng(`-su') -qti_init_shell } rfs_file:dir create_dir_perms;
