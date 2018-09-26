@@ -68,6 +68,9 @@ allow wfdservice graphics_device:chr_file rw_file_perms;
 #Allow access to encoder for YUV statistics
 allow wfdservice gpu_device:chr_file rw_file_perms;
 
+#Allow communication with init over property server
+unix_socket_connect(wfdservice, property, init);
+
 #Allow access to /dev/video/* devices for encoding/decoding
 allow wfdservice video_device:chr_file rw_file_perms;
 allow wfdservice video_device:dir r_dir_perms;
@@ -101,7 +104,7 @@ allow wfdservice input_device:chr_file r_file_perms;
 
 # Allow access to mediaserver, surfaceflinger and permissionmanager
 # for interaction of wfdservice
-allow wfdservice {audioserver_service permission_service surfaceflinger_service wfdservice_service}: service_manager find;
+allow wfdservice {audioserver_service permission_service surfaceflinger_service wfdservice_service mediametrics_service}: service_manager find;
 
 #Allow setting of net_admin capability so that libnl API's can be used
 allow wfdservice self:capability net_admin;
