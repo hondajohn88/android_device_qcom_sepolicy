@@ -44,3 +44,6 @@ add_service(system_server, regionalization_service);
 #add_service(system_server, vendor_perf_service);
 allow system_server vendor_perf_service:service_manager find;
 binder_call(system_server,qvrd);
+
+#Allow system_server to find pocket_service
+allow system_server pocket_service:service_manager { add find };
