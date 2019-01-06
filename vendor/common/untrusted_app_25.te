@@ -30,6 +30,3 @@
 #      unblock but needs an alternative for this.
 # allow untrusted apps to access hal_perf
 #hal_client_domain(untrusted_app_25, hal_perf);
-
-allow untrusted_app_25 rootfs:dir read;
-allow untrusted_app_25 rootfs:dir open;

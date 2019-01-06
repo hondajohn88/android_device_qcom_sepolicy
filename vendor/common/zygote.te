@@ -27,7 +27,6 @@
 
 typeattribute zygote system_writes_vendor_properties_violators;
 # persist.service.bdroid.bdaddr hw.cabl.level
-allow zygote { vendor_bluetooth_prop system_prop } :property_service set;
+set_prop(zygote, vendor_bluetooth_prop)
+set_prop(zygote, system_prop)
 get_prop(zygote, vendor_mpctl_prop)
-allow zygote dalvikcache_data_file:file execute;
-allow zygote vendor_app_file:dir read;

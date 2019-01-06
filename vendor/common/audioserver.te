@@ -1,4 +1,4 @@
-# Copyright (c) 2016-2017, The Linux Foundation. All rights reserved.
+# Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -62,6 +62,10 @@ allow audioserver proc_audiod:file r_file_perms;
 allow audioserver sysfs_audio:dir r_dir_perms;
 allow audioserver sysfs_thermal:file r_file_perms;
 
+# allow access to ALSA MMAP FDs for AAudio API
+allow audioserver audio_device:chr_file rw_file_perms;
+allow audioserver audio_service:service_manager find;
+
 # Allow audioserver to access sysfs nodes
 allow audioserver sysfs_audio:file rw_file_perms;
 userdebug_or_eng(`
@@ -74,7 +78,3 @@ userdebug_or_eng(`
 # audio properties
 get_prop(audioserver, vendor_audio_prop)
 
-# DOLBY_START
-allow audioserver activity_service:service_manager find;
-get_prop(audioserver, dolby_prop)
-# DOLBY_END

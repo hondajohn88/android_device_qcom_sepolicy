@@ -51,13 +51,10 @@ allow wcnss_service mnt_vendor_file:file rw_file_perms;
 
 # This is needed for ptt_socket app to write logs file collected to sdcard
 r_dir_file(wcnss_service, proc_wifi_dbg)
-r_dir_file(wcnss_service, sysfs_diag)
-allow wcnss_service diag_device:chr_file rw_file_perms;
 r_dir_file(wcnss_service, storage_file)
 r_dir_file(wcnss_service, mnt_user_file)
 diag_use(wcnss_service)
 ')
-dontaudit wcnss_service diag_device:chr_file rw_file_perms;
 
 #binder_use(wcnss_service)
 use_vendor_per_mgr(wcnss_service)
@@ -69,7 +66,10 @@ get_prop(wcnss_service, hwservicemanager_prop)
 hal_client_domain(wcnss_service, hal_perf)
 
 # read persist.vendor.wigig.npt.enable
-get_prop(wcnss_service, wigig_prop);
+get_prop(wcnss_service, wigig_prop)
 
 # allow to read /sys/class/net file
 r_dir_file(wcnss_service, sysfs_net);
+
+# set property to vendor.wlan is enable
+set_prop(wcnss_service, vendor_wifi_prop)

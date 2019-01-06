@@ -27,4 +27,3 @@
 
 # loading modules
 allow modprobe kernel:key search;
-allow modprobe vendor_file:system module_load;
